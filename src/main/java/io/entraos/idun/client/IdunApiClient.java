@@ -14,7 +14,7 @@ import java.util.concurrent.Future;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class IdunApiClient {
+public class IdunApiClient implements IdunApiService {
     private static final Logger log = getLogger(IdunApiClient.class);
     public static final String SCOPE = "https://en.proptechos.com/api/.default";
 
@@ -44,6 +44,20 @@ public class IdunApiClient {
         Future<IAuthenticationResult> future = app.acquireToken(clientCredentialParameters);
 
         accessToken = future.get().accessToken();
+    }
+
+    @Override
+    public String fetchAccessToken() {
+        try {
+            login();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return accessToken;
     }
 
     public String getSensor(String sensorUuid) {
