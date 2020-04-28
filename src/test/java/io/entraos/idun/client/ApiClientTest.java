@@ -32,9 +32,9 @@ public class ApiClientTest {
                 .build();
         CircuitBreakerRegistry registry = CircuitBreakerRegistry.of(config);
         CircuitBreaker circuitBreaker = registry.circuitBreaker("my");
-        Function<IdunApiService, String> decorated = CircuitBreaker.decorateFunction(circuitBreaker, service::fetchAccessToken);
+        Function<String, String> decorated = CircuitBreaker.decorateFunction(circuitBreaker, service::fetchAccessToken);
 
-        when(service.fetchAccessToken()).thenThrow(new RuntimeException());
+        when(service.fetchAccessToken(anyString())).thenThrow(new RuntimeException());
 
         for (int i = 0; i < 10; i++) {
             try {
@@ -43,6 +43,6 @@ public class ApiClientTest {
             }
         }
 
-        verify(service, times(5)).fetchAccessToken();
+        verify(service, times(5)).fetchAccessToken(anyString());
     }
 }

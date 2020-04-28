@@ -47,7 +47,7 @@ public class IdunApiClient implements IdunApiService {
     }
 
     @Override
-    public String fetchAccessToken() {
+    public String fetchAccessToken(String anything) {
         try {
             login();
         } catch (ExecutionException e) {
