@@ -14,13 +14,22 @@ import java.util.concurrent.Future;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class ApiClient {
-    private static final Logger log = getLogger(ApiClient.class);
+public class IdunApiClient {
+    private static final Logger log = getLogger(IdunApiClient.class);
     public static final String SCOPE = "https://en.proptechos.com/api/.default";
 
+    private final String tenantId;
+    private final String clientId;
+    private final String clientSecret;
     private String accessToken;
 
-    public void login(String tenantId, String clientId, String clientSecret)
+    public IdunApiClient(String tenantId, String clientId, String clientSecret) {
+        this.tenantId = tenantId;
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+    }
+
+    public void login()
             throws ExecutionException, InterruptedException, MalformedURLException {
 
         ConfidentialClientApplication app =
@@ -37,14 +46,21 @@ public class ApiClient {
         accessToken = future.get().accessToken();
     }
 
+    public String getSensor(String sensorUuid) {
+        String sensorJson = null;
+
+        return sensorJson;
+    }
+
     public String getAccessToken() {
         return accessToken;
     }
 
     public static void main(String[] args) throws InterruptedException, ExecutionException, MalformedURLException {
-        ApiClient apiClient = new ApiClient();
+
         if (args.length == 3) {
-            apiClient.login(args[0], args[1], args[2]);
+            IdunApiClient apiClient = new IdunApiClient(args[0], args[1], args[2]);
+            apiClient.login();
             log.info("AccessToken is: {}", apiClient.getAccessToken());
         } else {
             log.error("Need 3 arguments tenantId, clientId and clientSecret");
