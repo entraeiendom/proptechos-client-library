@@ -21,9 +21,18 @@
     <service.name>proptechos-client</service.name>
     <slf4j.version>1.7.30</slf4j.version>
     <additionalparam>-Xdoclint:none</additionalparam>
+    <maven.compiler.source>14</maven.compiler.source>
+    <maven.compiler.target>14</maven.compiler.target>
   </properties>
 
   <dependencies>
+    <!-- Access to Azure -->
+    <dependency>
+      <groupId>com.microsoft.azure</groupId>
+      <artifactId>msal4j</artifactId>
+      <version>1.4.0</version>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
