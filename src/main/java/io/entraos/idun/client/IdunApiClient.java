@@ -16,6 +16,7 @@ import java.util.concurrent.Future;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+
 public class IdunApiClient implements IdunApiService {
     private static final Logger log = getLogger(IdunApiClient.class);
     public static final String SCOPE = "https://en.proptechos.com/api/.default";
@@ -75,19 +76,5 @@ public class IdunApiClient implements IdunApiService {
         return accessToken;
     }
 
-    public static void main(String[] args) throws InterruptedException, ExecutionException, MalformedURLException {
 
-        if (args.length >= 3) {
-            IdunApiClient apiClient = new IdunApiClient(args[0], args[1], args[2]);
-            apiClient.login();
-            log.info("AccessToken is: {}", apiClient.getAccessToken());
-            String sensorId = System.getProperty("sensorId");
-            if (sensorId != null) {
-                String sensorJson = apiClient.getSensor(sensorId);
-                log.info("Sensor: {}", sensorJson);
-            }
-        } else {
-            log.error("Need 3 arguments tenantId, clientId and clientSecret");
-        }
-    }
 }
