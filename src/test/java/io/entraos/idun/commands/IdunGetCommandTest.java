@@ -15,7 +15,7 @@ public class IdunGetCommandTest {
     @Ignore
     @Test()
     public void getAsJson() {
-        String json = new IdunGetCommand("idunGet").getAsJson();
+        String json = new IdunGetCommand(null, "idunGet").getAsJson();
         assertNotNull(json);
     }
 }

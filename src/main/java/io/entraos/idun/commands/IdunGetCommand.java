@@ -1,5 +1,6 @@
 package io.entraos.idun.commands;
 
+import io.entraos.base.commands.BaseCommand;
 import io.entraos.base.commands.http.BaseHttpCommand;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
@@ -7,7 +8,6 @@ import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -19,17 +19,17 @@ public class IdunGetCommand extends BaseHttpCommand {
     private HttpRequest httpRequest;
     private Function<HttpRequest, HttpResponse> decorated;
     private CircuitBreaker circuitBreaker;
+    private URI baseUri;
 
-    protected IdunGetCommand(String groupKey) {
-        super(groupKey);
-        client = HttpClient.newBuilder().build();
-        initializeCircuitBreaker();
+    protected IdunGetCommand(URI baseUri, String groupKey) {
+        this(baseUri, groupKey, BaseCommand.DEFAULT_TIMEOUT);
     }
 
-    protected IdunGetCommand(String groupKey, int timeout) {
-        super(groupKey, timeout);
+    protected IdunGetCommand(URI baseUri, String groupKey, int timeout) {
+        super(baseUri, groupKey, timeout);
         client = HttpClient.newBuilder().build();
         initializeCircuitBreaker();
+        this.baseUri = baseUri;
 
     }
 
@@ -60,17 +60,14 @@ public class IdunGetCommand extends BaseHttpCommand {
     //Should we impose String body on HttpCommands?
     @Override
     protected HttpResponse<String> run() {
-        try {
-            httpRequest = HttpRequest.newBuilder()
-                    .uri(new URI("https://postman-echo.com/get"))
-                    .GET()
-                    .build();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        httpRequest = HttpRequest.newBuilder()
+                .header("Authorization", buildAuthorization())
+                .uri(buildUri())
+                .GET()
+                .build();
         decorated = CircuitBreaker.decorateFunction(circuitBreaker, httpRequest -> {
             try {
-                return client.send(httpRequest,HttpResponse.BodyHandlers.ofString());
+                return client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -79,8 +76,18 @@ public class IdunGetCommand extends BaseHttpCommand {
             return null;
         });
 
-        HttpResponse<String> response = decorated.apply(httpRequest );
+        HttpResponse<String> response = decorated.apply(httpRequest);
 
         return response;
+    }
+
+    @Override
+    protected URI buildUri() {
+        return baseUri;
+    }
+
+    @Override
+    protected String buildAuthorization() {
+        return "";
     }
 }

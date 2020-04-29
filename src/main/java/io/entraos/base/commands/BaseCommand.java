@@ -1,7 +1,7 @@
 package io.entraos.base.commands;
 
 public abstract class BaseCommand {
-    private final static int DEFAULT_TIMEOUT = 2000;
+    public final static int DEFAULT_TIMEOUT = 2000;
     private final String groupKey;
     private final int timeout;
 

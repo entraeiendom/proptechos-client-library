@@ -2,16 +2,28 @@ package io.entraos.base.commands.http;
 
 import io.entraos.base.commands.BaseCommand;
 
+import java.net.URI;
+
 public abstract class BaseHttpCommand<HttpResponse> extends BaseCommand {
 
 
-    protected BaseHttpCommand(String groupKey) {
-        super(groupKey);
+    private final URI baseUri;
+
+    protected BaseHttpCommand(URI baseUri, String groupKey) {
+        this(baseUri, groupKey, BaseCommand.DEFAULT_TIMEOUT);
     }
 
-    protected BaseHttpCommand(String groupKey, int timeout) {
+    protected BaseHttpCommand(URI baseUri, String groupKey, int timeout) {
         super(groupKey,timeout);
+        this.baseUri = baseUri;
+    }
+    protected URI getBaseUri() {
+        return baseUri;
     }
 
     protected abstract HttpResponse run();
+
+    protected abstract URI buildUri();
+
+    protected abstract String buildAuthorization();
 }
