@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
@@ -29,7 +30,7 @@ public class IdunApiClient implements IdunApiService {
     private final String clientSecret;
     private String accessToken;
     private int tokenTimeToLiveSeconds;
-    private Date tokenExpiresAt;
+    private Instant tokenExpiresAt;
     private ConfidentialClientApplication msalApp;
     private ClientCredentialParameters clientCredentialParameters;
     private ScheduledExecutorService scheduledExecutorService;
@@ -55,25 +56,49 @@ public class IdunApiClient implements IdunApiService {
             scheduledExecutorService =
                     Executors.newScheduledThreadPool(1);
 
-            scheduledFuture =
-                    scheduledExecutorService.scheduleAtFixedRate(() -> {
-                                System.out.println("Executed!");
-                            },
-                            1,
-                            5,
-                            TimeUnit.SECONDS);
-
         } catch (MalformedURLException e) {
             log.warn("Failed to setup MSAL application for tenantId: {}. Reason: {}", tenantId, e.getMessage());
             throw new RuntimeException("Failed to setup MSAL application for tenantId: " + tenantId, e);
         }
     }
 
+    void scheduleRefresh() {
+        int firstDelay = 1;
+        if (scheduledFuture == null && tokenExpiresAt != null) {
+            long refreshEverySecLong = Duration.between(Instant.now(), tokenExpiresAt).toSeconds();
+            int refreshEverySec = Integer.MAX_VALUE;
+            try {
+                refreshEverySec = Math.toIntExact(refreshEverySecLong);
+                if (refreshEverySec > 10) {
+                    firstDelay = refreshEverySec - 10;
+                } else {
+                    firstDelay = refreshEverySec;
+                }
+            } catch (ArithmeticException e) {
+                log.trace("Refresh rate set to longer than max integer. Overriding to max integer. Reason: {}", e.getMessage());
+            }
+            log.info("Scheduling refresh of AccessToken. To be run every {} seconds. ", refreshEverySec);
+            scheduledFuture =
+                    scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+                                                                     public void run() {
+                                                                         System.out.println("Executed!");
+                                                                     }
+                                                                 },
+                            firstDelay,
+                            refreshEverySec,
+                            TimeUnit.SECONDS);
+        }
+    }
+
     public String login() {
         try {
             Future<IAuthenticationResult> future = msalApp.acquireToken(clientCredentialParameters);
-            tokenExpiresAt = future.get().expiresOnDate();
             accessToken = future.get().accessToken();
+            Date expiresOnDate = future.get().expiresOnDate();
+            if (scheduledFuture == null && expiresOnDate != null) {
+                tokenExpiresAt = expiresOnDate.toInstant();
+                scheduleRefresh();
+            }
         } catch (ExecutionException e) {
             log.warn("Failed to login. ClientId: {} tenantId: {}. Reason: {}", clientId, tenantId, e.getMessage());
             throw new RuntimeException("Failed to login. ClientId: " + clientId + " TenantId: " + tenantId, e);
@@ -103,7 +128,7 @@ public class IdunApiClient implements IdunApiService {
     }
 
     public Instant getTokenExpiresAt() {
-        return tokenExpiresAt.toInstant();
+        return tokenExpiresAt;
     }
 
 

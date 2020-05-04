@@ -2,14 +2,12 @@ package io.entraos.idun.client;
 
 import org.slf4j.Logger;
 
-import java.util.concurrent.ExecutionException;
-
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class ManualIdunApiClient {
     private static final Logger log = getLogger(ManualIdunApiClient.class);
 
-    public static void main(String[] args) throws InterruptedException, ExecutionException {
+    public static void main(String[] args) throws InterruptedException {
 
         if (args.length >= 3) {
             IdunApiClient apiClient = new IdunApiClient(args[0], args[1], args[2]);
@@ -20,7 +18,9 @@ public class ManualIdunApiClient {
                 String sensorJson = apiClient.getSensor(sensorId);
                 log.info("Sensor: {}", sensorJson);
             }
+            log.info("Sleeping");
             Thread.sleep(30);
+            log.info("Done");
         } else {
             log.error("Need 3 arguments tenantId, clientId and clientSecret");
         }
