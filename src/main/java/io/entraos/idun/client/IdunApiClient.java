@@ -81,7 +81,7 @@ public class IdunApiClient implements IdunApiService {
             scheduledFuture =
                     scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
                                                                      public void run() {
-                                                                         System.out.println("Executed!");
+                                                                         login();
                                                                      }
                                                                  },
                             firstDelay,
@@ -91,13 +91,19 @@ public class IdunApiClient implements IdunApiService {
     }
 
     public String login() {
+
         try {
+            log.debug("Aquire new token.");
             Future<IAuthenticationResult> future = msalApp.acquireToken(clientCredentialParameters);
             accessToken = future.get().accessToken();
             Date expiresOnDate = future.get().expiresOnDate();
-            if (scheduledFuture == null && expiresOnDate != null) {
+            log.debug("Token exires at: {}", expiresOnDate);
+            if (expiresOnDate != null) {
                 tokenExpiresAt = expiresOnDate.toInstant();
-                scheduleRefresh();
+                if (scheduledFuture == null) {
+                    log.debug("Setup scheduled refresh of token.");
+                    scheduleRefresh();
+                }
             }
         } catch (ExecutionException e) {
             log.warn("Failed to login. ClientId: {} tenantId: {}. Reason: {}", clientId, tenantId, e.getMessage());
@@ -132,4 +138,7 @@ public class IdunApiClient implements IdunApiService {
     }
 
 
+    public void stopRefresh() {
+        scheduledExecutorService.shutdown();
+    }
 }

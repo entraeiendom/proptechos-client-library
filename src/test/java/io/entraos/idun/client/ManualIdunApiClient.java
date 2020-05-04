@@ -2,6 +2,9 @@ package io.entraos.idun.client;
 
 import org.slf4j.Logger;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class ManualIdunApiClient {
@@ -19,7 +22,12 @@ public class ManualIdunApiClient {
                 log.info("Sensor: {}", sensorJson);
             }
             log.info("Sleeping");
-            Thread.sleep(30);
+            Instant stopRunningAt = Instant.now().plusSeconds(30);
+            do {
+                log.info("AccessToken expiresAt: {}", apiClient.getTokenExpiresAt());
+                Thread.sleep(10000);
+            } while (Duration.between(Instant.now(), stopRunningAt).toSeconds() > 0);
+            apiClient.stopRefresh();
             log.info("Done");
         } else {
             log.error("Need 3 arguments tenantId, clientId and clientSecret");
