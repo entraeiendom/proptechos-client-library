@@ -20,6 +20,7 @@ public class ManualIdunApiClient {
                 String sensorJson = apiClient.getSensor(sensorId);
                 log.info("Sensor: {}", sensorJson);
             }
+            Thread.sleep(30);
         } else {
             log.error("Need 3 arguments tenantId, clientId and clientSecret");
         }

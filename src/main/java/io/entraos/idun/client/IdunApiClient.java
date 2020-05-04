@@ -13,8 +13,7 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -33,6 +32,8 @@ public class IdunApiClient implements IdunApiService {
     private Date tokenExpiresAt;
     private ConfidentialClientApplication msalApp;
     private ClientCredentialParameters clientCredentialParameters;
+    private ScheduledExecutorService scheduledExecutorService;
+    private ScheduledFuture<?> scheduledFuture;
 
     public IdunApiClient(String tenantId, String clientId, String clientSecret) {
         this.tenantId = tenantId;
@@ -51,6 +52,17 @@ public class IdunApiClient implements IdunApiService {
 
             clientCredentialParameters =
                     ClientCredentialParameters.builder(Collections.singleton(SCOPE)).build();
+            scheduledExecutorService =
+                    Executors.newScheduledThreadPool(1);
+
+            scheduledFuture =
+                    scheduledExecutorService.scheduleAtFixedRate(() -> {
+                                System.out.println("Executed!");
+                            },
+                            1,
+                            5,
+                            TimeUnit.SECONDS);
+
         } catch (MalformedURLException e) {
             log.warn("Failed to setup MSAL application for tenantId: {}. Reason: {}", tenantId, e.getMessage());
             throw new RuntimeException("Failed to setup MSAL application for tenantId: " + tenantId, e);
