@@ -52,29 +52,31 @@ public class IdunApiClient implements IdunApiService {
             clientCredentialParameters =
                     ClientCredentialParameters.builder(Collections.singleton(SCOPE)).build();
         } catch (MalformedURLException e) {
-            log.warn("Failed to setup MSAL application for tennantId: {}. Reason: {}", tenantId, e.getMessage());
-            throw new RuntimeException("Failed to setup MSAL application. for tenantId: " + tenantId, e);
+            log.warn("Failed to setup MSAL application for tenantId: {}. Reason: {}", tenantId, e.getMessage());
+            throw new RuntimeException("Failed to setup MSAL application for tenantId: " + tenantId, e);
         }
     }
 
-    public void login()
-            throws ExecutionException, InterruptedException {
-
-        Future<IAuthenticationResult> future = msalApp.acquireToken(clientCredentialParameters);
-        tokenExpiresAt = future.get().expiresOnDate();
-        accessToken = future.get().accessToken();
+    public String login() {
+        try {
+            Future<IAuthenticationResult> future = msalApp.acquireToken(clientCredentialParameters);
+            tokenExpiresAt = future.get().expiresOnDate();
+            accessToken = future.get().accessToken();
+        } catch (ExecutionException e) {
+            log.warn("Failed to login. ClientId: {} tenantId: {}. Reason: {}", clientId, tenantId, e.getMessage());
+            throw new RuntimeException("Failed to login. ClientId: " + clientId + " TenantId: " + tenantId, e);
+        } catch (InterruptedException e) {
+            log.warn("Interrupted during login. ClientId: {} tenantId: {}. Reason: {}", clientId, tenantId, e.getMessage());
+            throw new RuntimeException("Interrupted during login. ClientId: " + clientId + " TenantId: " + tenantId, e);
+        }
+        return accessToken;
     }
 
     @Override
     public String fetchAccessToken(String anything) {
-        try {
-            login();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return accessToken;
+        String token4Bearer = login();
+
+        return token4Bearer;
     }
 
     public String getSensor(String sensorUuid) {
