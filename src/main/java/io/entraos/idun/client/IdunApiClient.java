@@ -122,7 +122,8 @@ public class IdunApiClient implements IdunApiService {
         return token4Bearer;
     }
 
-    public String getSensor(String sensorUuid) {
+    @Override
+    public String getSensorAsJson(String sensorUuid) {
         String sensorJson = null;
         GetSensorCommand getSensorCommand = new GetSensorCommand(BASE_URI, accessToken, sensorUuid);
         sensorJson = getSensorCommand.getAsJson();
