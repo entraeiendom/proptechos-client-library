@@ -5,4 +5,7 @@ public interface IdunApiService {
 
     String fetchAccessToken(String anything) throws RuntimeException;
 
+    //Sensors
+    String getSensor(String sensorUuid);
+
 }
