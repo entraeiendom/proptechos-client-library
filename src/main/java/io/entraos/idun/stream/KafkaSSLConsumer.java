@@ -5,10 +5,7 @@ import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import static io.entraos.idun.stream.json.JsonPathHelper.buildRecMessage;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -32,6 +29,8 @@ public class KafkaSSLConsumer implements RecMessageConsumer {
         this.bootstrapServers = bootstrapServers;
         this.saslJaasConfig = saslJaasConfig;
         listeners = new ArrayList<>();
+        Random rand = new Random();
+        id = rand.nextInt(10000);
     }
 
     public void run (){
@@ -68,7 +67,7 @@ public class KafkaSSLConsumer implements RecMessageConsumer {
         try {
             final Properties properties = new Properties();
             synchronized (KafkaSSLConsumer.class) {
-                properties.put(ConsumerConfig.CLIENT_ID_CONFIG, "KafkaExampleConsumer#" + id);
+                properties.put(ConsumerConfig.CLIENT_ID_CONFIG, "IdunKafkaSSLConsumer#" + id);
                 id++;
             }
             properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
