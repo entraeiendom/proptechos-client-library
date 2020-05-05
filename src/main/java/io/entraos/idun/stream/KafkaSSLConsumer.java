@@ -93,6 +93,6 @@ public class KafkaSSLConsumer implements RecMessageConsumer {
 
     @Override
     public void setMessageListener(RecMessageListener listener) throws RecMessageException {
-
+        listeners.add(listener);
     }
 }
