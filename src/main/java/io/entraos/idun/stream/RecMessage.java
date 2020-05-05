@@ -11,4 +11,11 @@ public class RecMessage {
     public String getObservationTime() {
         return observationTime;
     }
+
+    @Override
+    public String toString() {
+        return "RecMessage{" +
+                "observationTime='" + observationTime + '\'' +
+                '}';
+    }
 }

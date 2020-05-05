@@ -26,4 +26,13 @@ public class RecObservationMessage extends RecMessage {
     public void setQuantityKind(String quantityKind) {
         this.quantityKind = quantityKind;
     }
+
+    @Override
+    public String toString() {
+        return "RecObservationMessage{" +
+                "sensorId='" + sensorId + '\'' +
+                ", value='" + value + '\'' +
+                ", quantityKind='" + quantityKind + '\'' +
+                "} " + super.toString();
+    }
 }
