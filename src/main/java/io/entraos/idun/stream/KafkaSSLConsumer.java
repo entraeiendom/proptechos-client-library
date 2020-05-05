@@ -1,20 +1,23 @@
-package io.entraos.idun.stream;//Copyright (c) Microsoft Corporation. All rights reserved.
-//Licensed under the MIT License.
+package io.entraos.idun.stream;
 
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
+import static io.entraos.idun.stream.json.JsonPathHelper.buildRecMessage;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class KafkaSSLConsumer implements Runnable {
+public class KafkaSSLConsumer implements RecMessageConsumer {
     private static final Logger log = getLogger(KafkaSSLConsumer.class);
 
     //Each consumer needs a unique client ID per thread
+    private final List<RecMessageListener> listeners;
     private static int id = 0;
     public static final String DEFAULT_GROUP_ID = "$Default";
     public static final int DEFAULT_TIMEOUT_MS = 60000;
@@ -28,6 +31,7 @@ public class KafkaSSLConsumer implements Runnable {
         this.topic = topic;
         this.bootstrapServers = bootstrapServers;
         this.saslJaasConfig = saslJaasConfig;
+        listeners = new ArrayList<>();
     }
 
     public void run (){
@@ -38,7 +42,7 @@ public class KafkaSSLConsumer implements Runnable {
             while (true) {
                 final ConsumerRecords<Long, String> consumerRecords = consumer.poll(1000);
                 for(ConsumerRecord<Long, String> cr : consumerRecords) {
-                   log.debug("Consumer Record:({}, {}, {}, {})\n", cr.key(), cr.value(), cr.partition(), cr.offset());
+                   notifyListeners(cr);
                 }
                 consumer.commitAsync();
             }
@@ -49,7 +53,17 @@ public class KafkaSSLConsumer implements Runnable {
         }
     }
 
-    private Consumer<Long, String> createConsumer() {
+    void notifyListeners(ConsumerRecord<Long, String> consumerRecord) {
+        //TODO parse json
+        // {"observation":{"value":"168.649993896484","quantityKind":"Pressure","sensorId":"7352a083-2540-4f70-bc48-0200d92fb5dc","observationTime":"2020-05-05T15:57:59Z"}
+        String recordJson = consumerRecord.value();
+        RecMessage message = buildRecMessage(recordJson);
+        for (RecMessageListener listener : listeners) {
+            listener.onMessage(message);
+        }
+    }
+
+    Consumer<Long, String> createConsumer() {
         Consumer<Long, String> consumer;
         try {
             final Properties properties = new Properties();
@@ -76,5 +90,10 @@ public class KafkaSSLConsumer implements Runnable {
             consumer = null;
         }
         return consumer;
+    }
+
+    @Override
+    public void setMessageListener(RecMessageListener listener) throws RecMessageException {
+
     }
 }
