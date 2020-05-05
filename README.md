@@ -5,7 +5,7 @@ Access to Idun aka ProptechOs via API and Stream
 
 The parameters for topic, bootstrapServers and saslJaasConfig must be obtained from [Idun](https://idunrealestate.com/implementation/)
 
-```
+```java
 final int NUM_THREADS = 1;
 final String topic = "idun-enprod-eventhub-recipient-<customer>"
 final String bootstrapServers="<host>servicebus.windows.net:9093";
