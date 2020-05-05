@@ -134,10 +134,13 @@ public class IdunApiClient implements IdunApiService {
         return accessToken;
     }
 
+    public static URI getBaseUri() {
+        return BASE_URI;
+    }
+
     public Instant getTokenExpiresAt() {
         return tokenExpiresAt;
     }
-
 
     public void stopRefresh() {
         scheduledExecutorService.shutdown();
