@@ -51,6 +51,13 @@
       <version>2.4.0</version>
     </dependency>
 
+    <!-- Metrics -->
+    <dependency>
+      <groupId>org.eclipse.microprofile.metrics</groupId>
+      <artifactId>microprofile-metrics-api</artifactId>
+      <version>2.3.2</version>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- Logging -->
     <dependency>

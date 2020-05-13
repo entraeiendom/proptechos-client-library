@@ -3,6 +3,7 @@ package io.entraos.idun.stream;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.eclipse.microprofile.metrics.Meter;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -12,6 +13,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class KafkaSSLConsumer implements RecMessageConsumer {
     private static final Logger log = getLogger(KafkaSSLConsumer.class);
+    public static final String METRIC_NAME = "IDUN-" + KafkaSSLConsumer.class.getName();
 
     //Each consumer needs a unique client ID per thread
     private final List<RecMessageListener> listeners;
@@ -23,6 +25,7 @@ public class KafkaSSLConsumer implements RecMessageConsumer {
     private final String topic;
     private final String bootstrapServers;
     private final String saslJaasConfig;
+    private Meter meter;
 
     public KafkaSSLConsumer(String topic, String bootstrapServers, String saslJaasConfig){
         this.topic = topic;
@@ -33,6 +36,13 @@ public class KafkaSSLConsumer implements RecMessageConsumer {
         id = rand.nextInt(10000);
     }
 
+    public KafkaSSLConsumer(String topic, String bootstrapServers, String saslJaasConfig, Meter meter){
+        this(topic,bootstrapServers,saslJaasConfig);
+        this.meter = meter;
+    }
+
+
+
     public void run (){
         final Consumer<Long, String> consumer = createConsumer();
         log.info("Polling: {} ", topic);
@@ -42,6 +52,9 @@ public class KafkaSSLConsumer implements RecMessageConsumer {
                 final ConsumerRecords<Long, String> consumerRecords = consumer.poll(1000);
                 for(ConsumerRecord<Long, String> cr : consumerRecords) {
                    notifyListeners(cr);
+                   if (meter != null) {
+                       meter.mark();
+                   }
                 }
                 consumer.commitAsync();
             }
