@@ -61,7 +61,9 @@ public class KafkaSSLConsumer implements RecMessageConsumer {
         } catch (CommitFailedException e) {
             log.info("CommitFailedException: {}", e.getMessage(), e);
         } finally {
-            consumer.close();
+            if (consumer != null) {
+                consumer.close();
+            }
         }
     }
 
