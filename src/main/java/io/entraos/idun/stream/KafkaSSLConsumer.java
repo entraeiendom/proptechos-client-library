@@ -48,7 +48,7 @@ public class KafkaSSLConsumer implements RecMessageConsumer {
         log.info("Polling: {} ", topic);
 
         try {
-            while (true) {
+            while (consumer != null) {
                 final ConsumerRecords<Long, String> consumerRecords = consumer.poll(1000);
                 for(ConsumerRecord<Long, String> cr : consumerRecords) {
                    notifyListeners(cr);
