@@ -93,6 +93,13 @@ public class KafkaSSLConsumer implements RecMessageConsumer {
             properties.put("security.protocol", DEFAULT_SECURITY_PROTOCOL);
             properties.put("sasl.mechanism", DEFAULT_SASL_MECHANISM);
             properties.put("sasl.jaas.config", saslJaasConfig);
+            String propsMsg = "Create KafkaConsumer with these properties:\n";
+            for (Object key : properties.keySet()) {
+                propsMsg += "key: " + key + ", value: " + properties.get(key) + "\n";
+            }
+            log.info("Create KafkaConsumer with these properties: {}", propsMsg);
+            //TODO remove from sout
+            System.out.println(propsMsg);
             // Create the consumer using properties.
             consumer = new KafkaConsumer<>(properties);
 
