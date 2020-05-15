@@ -98,9 +98,6 @@ public class KafkaSSLConsumer implements RecMessageConsumer {
                 propsMsg += "key: " + key + ", value: " + properties.get(key) + "\n";
             }
             log.info("Create KafkaConsumer with these properties: {}", propsMsg);
-            //TODO remove from sout
-            System.out.println(propsMsg);
-            // Create the consumer using properties.
             consumer = new KafkaConsumer<>(properties);
 
             // Subscribe to the topic.
