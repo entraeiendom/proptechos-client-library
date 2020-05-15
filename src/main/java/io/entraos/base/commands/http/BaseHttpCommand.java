@@ -8,6 +8,7 @@ public abstract class BaseHttpCommand<HttpResponse> extends BaseCommand {
 
 
     private final URI baseUri;
+    protected HttpResponse response;
 
     protected BaseHttpCommand(URI baseUri, String groupKey) {
         this(baseUri, groupKey, BaseCommand.DEFAULT_TIMEOUT);
@@ -26,4 +27,8 @@ public abstract class BaseHttpCommand<HttpResponse> extends BaseCommand {
     protected abstract URI buildUri();
 
     protected abstract String buildAuthorization();
+
+    public HttpResponse getResponse() {
+        return response;
+    }
 }

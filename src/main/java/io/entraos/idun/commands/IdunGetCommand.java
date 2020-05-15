@@ -76,9 +76,9 @@ public class IdunGetCommand extends BaseHttpCommand {
             return null;
         });
 
-        HttpResponse<String> response = decorated.apply(httpRequest);
+        response = decorated.apply(httpRequest);
 
-        return response;
+        return (HttpResponse<String>) response;
     }
 
     @Override
