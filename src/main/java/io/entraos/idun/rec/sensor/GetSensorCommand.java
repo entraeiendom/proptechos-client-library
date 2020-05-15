@@ -1,8 +1,11 @@
 package io.entraos.idun.rec.sensor;
 
 import io.entraos.idun.commands.IdunGetCommand;
+import io.entraos.rec.domain.Sensor;
+import io.entraos.rec.mappers.SensorJsonMapper;
 
 import java.net.URI;
+import java.net.http.HttpResponse;
 
 public class GetSensorCommand extends IdunGetCommand {
     private final String accessToken;
@@ -24,5 +27,16 @@ public class GetSensorCommand extends IdunGetCommand {
     @Override
     protected String buildAuthorization() {
         return "Bearer " + accessToken;
+    }
+
+    public Sensor getSensor() {
+        String json = null;
+        HttpResponse<String> response = run();
+        json = response.body();
+        Sensor sensor = null;
+        if (json != null) {
+            sensor = SensorJsonMapper.fromJson(json);
+        }
+        return sensor;
     }
 }

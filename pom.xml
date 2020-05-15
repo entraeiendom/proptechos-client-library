@@ -25,6 +25,11 @@
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>io.entraos.rec</groupId>
+      <artifactId>realestatecore-typelib</artifactId>
+      <version>0.3.0-SNAPSHOT</version>
+    </dependency>
     <!-- Access to Azure -->
     <dependency>
       <groupId>com.microsoft.azure</groupId>
