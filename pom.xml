@@ -5,7 +5,7 @@
 
   <groupId>io.entraos.idun</groupId>
   <artifactId>proptechos-client</artifactId>
-  <version>0.3.1-SNAPSHOT</version>
+  <version>0.3.2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>proptechos-client</name>
@@ -18,6 +18,7 @@
 
   <properties>
     <service.name>proptechos-client</service.name>
+    <realestatecore.typelib>0.3.2-SNAPSHOT</realestatecore.typelib>
     <slf4j.version>1.7.30</slf4j.version>
     <additionalparam>-Xdoclint:none</additionalparam>
     <maven.compiler.source>11</maven.compiler.source>
@@ -28,7 +29,7 @@
     <dependency>
       <groupId>io.entraos.rec</groupId>
       <artifactId>realestatecore-typelib</artifactId>
-      <version>0.3.0-SNAPSHOT</version>
+      <version>${realestatecore.typelib}</version>
     </dependency>
     <!-- Access to Azure -->
     <dependency>
