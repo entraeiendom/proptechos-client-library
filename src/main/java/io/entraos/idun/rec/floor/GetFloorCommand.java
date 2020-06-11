@@ -9,17 +9,17 @@ import java.net.http.HttpResponse;
 
 public class GetFloorCommand extends IdunGetCommand {
     private final String accessToken;
-    private final String sensorUuid;
+    private final String floorUuid;
 
-    public GetFloorCommand(URI baseURI, String accessToken, String sensorUuid) {
+    public GetFloorCommand(URI baseURI, String accessToken, String floorUuid) {
         super(baseURI,"Sensors");
         this.accessToken = accessToken;
-        this.sensorUuid = sensorUuid;
+        this.floorUuid = floorUuid;
     }
 
     @Override
     protected URI buildUri() {
-        String fullUrl = getBaseUri().toString() + "buildingcomponent/" + sensorUuid;
+        String fullUrl = getBaseUri().toString() + "json/storey/" + floorUuid;
         URI fullUri = URI.create(fullUrl);
         return fullUri;
     }
