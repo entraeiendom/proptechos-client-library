@@ -5,7 +5,7 @@
 
   <groupId>io.entraos.idun</groupId>
   <artifactId>proptechos-client</artifactId>
-  <version>0.3.3-SNAPSHOT</version>
+  <version>0.3.3</version>
   <packaging>jar</packaging>
 
   <name>proptechos-client</name>
@@ -13,7 +13,7 @@
     <developerConnection>scm:git:ssh://git@github.com/entraeiendom/proptechos-client-library.git</developerConnection>
     <connection>scm:git:https://github.com/entraeiendom/proptechos-client-library.git</connection>
     <url>https://github.com/entraeiendom/proptechos-client-library</url>
-    <tag>HEAD</tag>
+    <tag>proptechos-client-0.3.3</tag>
   </scm>
 
   <properties>
