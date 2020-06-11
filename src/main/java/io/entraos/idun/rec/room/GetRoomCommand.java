@@ -16,7 +16,7 @@ public class GetRoomCommand extends IdunGetCommand {
 
     @Override
     protected URI buildUri() {
-        String fullUrl = getBaseUri().toString() + "buildingcomponent/" + sensorUuid;
+        String fullUrl = getBaseUri().toString() + "json/room/" + sensorUuid;
         URI fullUri = URI.create(fullUrl);
         return fullUri;
     }
