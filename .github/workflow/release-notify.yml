@@ -1,0 +1,17 @@
+on:
+  push:
+    tags:
+      - '*[0-9]+.[0-9]+.[0-9]+'
+jobs:
+  notify:
+    name: Notify releases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2.0.2
+        env:
+          SLACK_CHANNEL: entraos-dev-releases
+          SLACK_ICON: https://github.com/entraeiendom.png?size=48
+          SLACK_TITLE: 'A new release :rocket:'
+          SLACK_USERNAME: release-notify-bot
+          SLACK_WEBHOOK: ${{ secrets.RELEASE_SLACK_WEBHOOK }}
