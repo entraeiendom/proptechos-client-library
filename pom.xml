@@ -153,4 +153,17 @@
     </snapshotRepository>
 
   </distributionManagement>
+
+  <repositories>
+    <repository>
+      <id>entraos-public-releases</id>
+      <name>EntraOS Public Release Repository</name>
+      <url>https://nexus.entraos.io/content/repositories/releases/</url>
+    </repository>
+    <repository>
+      <id>entraos-public-snapshots</id>
+      <name>EntraOS Public Snapshot Repository</name>
+      <url>https://nexus.entraos.io/content/repositories/snapshots/</url>
+    </repository>
+  </repositories>
 </project>
